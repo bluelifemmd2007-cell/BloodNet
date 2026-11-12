@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f5f2">
+  <title>BloodNet | Operations</title>
+  <link rel="stylesheet" href="/static/app.css?v=3">
+  <script src="/static/app.js?v=4" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail" aria-label="Application navigation">
+      <a class="brand" href="/" aria-label="BloodNet operations home">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <span class="brand-name">bloodnet<span>.</span></span>
+      </a>
+      <div class="rail-label">فضای کاری</div>
+      <a class="nav-item active" href="#requests"><span class="nav-indicator"></span>درخواست‌ها</a>
+      <div class="rail-note">
+        <span class="rail-note-dot"></span>
+        <span>شبیه‌سازی محلی</span>
+      </div>
+      <div class="rail-bottom">
+        <div class="rail-label">وضعیت سرویس</div>
+        <div class="service-state"><span id="service-dot" class="service-dot"></span><span id="service-label">در حال اتصال</span></div>
+        <div class="sim-clock"><span>دقیقه شبیه‌سازی</span><strong id="sim-time">--</strong></div>
+      </div>
+    </aside>
+
+    <main class="main" id="requests">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">هماهنگی تأمین خون</div>
+          <h1>مدیریت درخواست‌ها</h1>
+        </div>
+        <div class="topbar-controls">
+          <label class="compact-field" for="hospital-select">بیمارستان
+            <select id="hospital-select" aria-label="Select hospital"></select>
+          </label>
+          <button class="button button-quiet" id="refresh-button" type="button" title="به‌روزرسانی">به‌روزرسانی</button>
+        </div>
+      </header>
+
+      <section class="metrics" aria-label="آمار درخواست‌ها">
+        <div class="metric"><span>فعال</span><strong id="metric-open">0</strong></div>
+        <div class="metric"><span>در انتظار بررسی</span><strong id="metric-review">0</strong></div>
+        <div class="metric"><span>تکمیل‌شده</span><strong id="metric-fulfilled">0</strong></div>
+        <div class="metric"><span>فوری</span><strong id="metric-critical">0</strong></div>
+        <div class="metric"><span>تکمیل نسبی</span><strong id="metric-partial">0</strong></div>
+        <div class="metric metric-alert"><span>نیازمند پیگیری</span><strong id="metric-attention">0</strong></div>
+        <div class="status-message" id="status-message" role="status" aria-live="polite">در حال دریافت اطلاعات زنده…</div>
+      </section>
+
+      <div class="workspace">
+        <section class="request-area" aria-labelledby="request-list-title">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">صف زنده</div>
+              <h2 id="request-list-title">درخواست‌ها</h2>
+            </div>
+            <label class="filter-field" for="status-filter">فیلتر
+              <select id="status-filter">
+                <option value="all">همه وضعیت‌ها</option>
+                <option value="active">فعال</option>
+                <option value="pending_review">در انتظار بررسی</option>
+                <option value="fulfilled">تکمیل‌شده</option>
+                <option value="cancelled">لغوشده</option>
+                <option value="expired">منقضی</option>
+              </select>
+            </label>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>درخواست</th><th>فرآورده / گروه</th><th>فوریت</th><th>تأمین‌شده</th><th>وضعیت</th></tr>
+              </thead>
+              <tbody id="request-rows">
+                <tr><td class="table-empty" colspan="5">در حال دریافت درخواست‌ها…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="list-footer"><span id="result-count">۰ درخواست</span><span>دریافت مستقیم از API</span></div>
+        </section>
+
+        <aside class="side-panel" aria-label="Request controls and details">
+          <section class="form-section">
+            <div class="eyebrow">درخواست جدید</div>
+            <h2>درخواست واحدهای خون</h2>
+            <form id="request-form">
+              <div class="form-grid">
+                <label>گروه خونی
+                  <select name="blood_group" required>
+                    <option>O+</option><option>A+</option><option>B+</option><option>AB+</option>
+                    <option>O-</option><option>A-</option><option>B-</option><option>AB-</option>
+                  </select>
+                </label>
+                <label>فرآورده
+                  <select name="product" required>
+                    <option value="red_cells">گلبول قرمز</option>
+                    <option value="platelets">پلاکت</option>
+                    <option value="plasma">پلاسما</option>
+                  </select>
+                </label>
+                <label>تعداد واحد
+                  <input name="units" type="number" min="1" max="20" value="2" required>
+                </label>
+                <label>فوریت
+                  <select name="urgency" required>
+                    <option value="critical">بحرانی</option>
+                    <option value="urgent">فوری</option>
+                    <option value="planned">برنامه‌ریزی‌شده</option>
+                  </select>
+                </label>
+              </div>
+              <label>یادداشت <span class="optional">اختیاری</span>
+                <textarea name="note" maxlength="500" rows="2" placeholder="توضیحات تکمیلی برای تیم هماهنگی"></textarea>
+              </label>
+              <button class="button button-primary" type="submit">ثبت درخواست</button>
+            </form>
+          </section>
+
+          <section class="detail-section" id="detail-section" aria-labelledby="detail-title">
+            <div class="eyebrow">جزئیات درخواست</div>
+            <div class="detail-empty" id="detail-empty">برای مشاهده وضعیت اهداکنندگان و موجودی، درخواستی را از صف انتخاب کنید.</div>
+            <div id="request-detail" hidden>
+              <div class="detail-title-line"><h2 id="detail-title">جزئیات</h2><span id="detail-status" class="state-pill">—</span></div>
+              <div class="detail-id" id="detail-id"></div>
+              <div class="counter-grid">
+                <div><span>موردنیاز</span><strong id="detail-needed">0</strong></div>
+                <div><span>پذیرفته‌شده</span><strong id="detail-confirmed">0</strong></div>
+                <div><span>در مسیر</span><strong id="detail-enroute">0</strong></div>
+                <div><span>رسیده</span><strong id="detail-arrived">0</strong></div>
+                <div><span>اهدای انجام‌شده</span><strong id="detail-donated">0</strong></div>
+                <div><span>در مسیر پردازش / حمل</span><strong id="detail-donation-inflight">0</strong></div>
+                <div><span>تحویل از اهداکننده</span><strong id="detail-fulfilled">0</strong></div>
+                <div><span>موجودی در مسیر</span><strong id="detail-stock">0</strong></div>
+              </div>
+              <div class="detail-meta" id="detail-meta"></div>
+              <div class="detail-actions">
+                <label>تغییر فوریت
+                <select id="amend-urgency"><option value="critical">بحرانی</option><option value="urgent">فوری</option><option value="planned">برنامه‌ریزی‌شده</option></select>
+                </label>
+                <button class="button button-quiet" id="amend-button" type="button">ثبت فوریت جدید</button>
+                <button class="button button-danger" id="cancel-button" type="button">لغو درخواست</button>
+              </div>
+              <div class="review-actions" id="review-actions" hidden>
+                <div><strong>بررسی هماهنگ‌کننده</strong><span>تأیید، فرایند تأمین را آغاز می‌کند.</span></div>
+                <button class="button button-primary" id="approve-button" type="button">تأیید</button>
+                <button class="button button-danger" id="reject-button" type="button">رد</button>
+              </div>
+            </div>
+          </section>
+
+          <details class="credentials">
+            <summary>توکن‌های نمایشی محلی</summary>
+            <div class="credential-grid">
+              <label>توکن بیمارستان<input id="hospital-token" type="password" value="hospital-token" autocomplete="off"></label>
+              <label>توکن هماهنگ‌کننده<input id="coordinator-token" type="password" value="coordinator-token" autocomplete="off"></label>
+            </div>
+          </details>
+        </aside>
+      </div>
+      <section class="operations-grid" aria-label="وضعیت زنده عملیات">
+        <article class="ops-card">
+          <div class="section-heading"><div><div class="eyebrow">موجودی زنده</div><h2>موجودی مراکز</h2></div></div>
+          <div class="table-wrap"><table><thead><tr><th>مرکز</th><th>فرآورده</th><th>گروه</th><th>واحد</th><th>انقضا (دقیقه شبیه‌سازی)</th></tr></thead><tbody id="inventory-rows"><tr><td class="table-empty" colspan="5">در انتظار داده سرویس موجودی…</td></tr></tbody></table></div>
+        </article>
+        <article class="ops-card">
+          <div class="section-heading"><div><div class="eyebrow">ارسال و تأمین</div><h2>ارسال‌های موجودی</h2></div></div>
+          <div class="table-wrap"><table><thead><tr><th>درخواست</th><th>مرکز</th><th>گروه / فرآورده</th><th>واحد</th><th>وضعیت / ETA</th></tr></thead><tbody id="dispatch-rows"><tr><td class="table-empty" colspan="5">هنوز ارسالی ثبت نشده است.</td></tr></tbody></table></div>
+        </article>
+        <article class="ops-card">
+          <div class="section-heading"><div><div class="eyebrow">گردش اهداکننده</div><h2>دعوت‌ها و پیشرفت</h2></div></div>
+          <div class="table-wrap"><table><thead><tr><th>درخواست</th><th>اهداکننده</th><th>پاسخ</th><th>پیشرفت</th><th>موعد تحویل / تحویل‌شده</th><th>زمان دعوت</th></tr></thead><tbody id="donor-rows"><tr><td class="table-empty" colspan="6">هنوز دعوتی ثبت نشده است.</td></tr></tbody></table></div>
+        </article>
+        <article class="ops-card">
+          <div class="section-heading"><div><div class="eyebrow">رویدادها</div><h2>رویدادهای اخیر</h2></div></div>
+          <div class="table-wrap"><table><thead><tr><th>رویداد</th><th>درخواست</th><th>زمان شبیه‌سازی</th></tr></thead><tbody id="event-rows"><tr><td class="table-empty" colspan="3">رویدادی برای نمایش نیست.</td></tr></tbody></table></div>
+        </article>
+      </section>
+      <footer class="footer"><span>BloodNet · محیط شبیه‌سازی رقابت</span><span>زمان فرایندها از ساعت Gateway دریافت می‌شود</span></footer>
+    </main>
+  </div>
+</body>
+</html>

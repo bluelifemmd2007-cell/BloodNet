@@ -1,0 +1,49 @@
+# فایل‌های موقت Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv312/
+venv/
+.env*
+!.env.example
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# خروجی اجرا و تمرین
+run_out/
+run_out*/
+out/
+outputs/
+*.log
+gateway_log.jsonl
+
+# دیتابیس محلی و فایل‌های جانبی SQLite
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+# فایل‌های ارائه‌شدهٔ برگزارکننده؛ تا روشن‌شدن مجوز بازتوزیع فقط محلی بمانند.
+/harness/
+/participant_kit/
+/starter/
+/PRACTICE.md
+/PARTICIPANT_README.md
+/RELEASE_NOTES.md
+/SERVICES.md
+/SHA256SUMS.txt
+/Dockerfile.example
+/docker-compose.example.yml
+
+# خروجی ساخت
+build/
+dist/
+*.egg-info/
+
+# فایل‌های سیستم‌عامل و ویرایشگر
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
